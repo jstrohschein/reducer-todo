@@ -6,17 +6,21 @@ import './App.css';
 
 const reducer = (state, action) => {
   switch (action.type) {
-    case 'add-todo':
+    case 'ADD-TODO':
       return {todos: [...state.todos, { item: action.payload, completed: false, id: new Date()}] };
-    case 'toggle-todo':
+    case 'TOGGLE-TODO':
       return {
         todos: state.todos.map((task, index) => index === action.payload ? {...task, completed: !task.completed} : task)
+      }
+    case 'CLEAR-COMPLETED':
+      return {
+        todos: state.todos.filter(t => !t.completed)
       }
     default:
       return state;
   }
 }
-
+ 
 function App() {
 
   const [{ todos }, dispatch] = useReducer(reducer, { todos: [] })
@@ -27,7 +31,7 @@ function App() {
     <div className="App">
       <form onSubmit = {e => {
         e.preventDefault()
-        dispatch({ type: 'add-todo', payload: text })
+        dispatch({ type: 'ADD-TODO', payload: text })
         setText('');
       }}>
 
@@ -37,13 +41,17 @@ function App() {
       {todos.map((task, index) => (
         <div 
         key={task.id} 
-        onClick={() => dispatch({type: 'toggle-todo', payload: index})}
+        onClick={() => dispatch({type: 'TOGGLE-TODO', payload: index})}
         style={{
           textDecoration: task.completed ? 'line-through' : ''
         }}
         > {task.item} 
         </div>
+        
       ))}
+
+      <button onClick={()=>dispatch({type: 'CLEAR-COMPLETED'})}>Clear List</button>  
+
 
 
 {/*   <pre>{JSON.stringify(todos, null, 2)}</pre>*/}    
